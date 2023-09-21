@@ -2,9 +2,8 @@ import React, {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import './user.scss'
 
-const User = () => {
+const useGithubUser = (userId) => {
     const [userData, setUserData] = useState(null)
-    const { userId } = useParams()
 
     useEffect(() => {
         fetch(`https://api.github.com/users/${userId}`)
@@ -19,12 +18,19 @@ const User = () => {
                 setUserData(userData)
             })
     }, [userId])
-    
 
-    if (!userData) {
+    return userData
+}
+
+const User = () => {
+    const { userId } = useParams()
+    const data = useGithubUser(userId)
+
+
+    if (!data) {
         return null
     }
-    const { name, location, avatar_url } = userData
+    const { name, location, avatar_url } = data
     return (
         <div className="user">
             <img
