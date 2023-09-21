@@ -1,35 +1,20 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
+import {useGithubUser} from "./useGithubUser";
 import './user.scss'
-
-const useGithubUser = (userId) => {
-    const [userData, setUserData] = useState(null)
-
-    useEffect(() => {
-        fetch(`https://api.github.com/users/${userId}`)
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-
-                throw new Error()
-            })
-            .then(userData => {
-                setUserData(userData)
-            })
-    }, [userId])
-
-    return userData
-}
 
 const User = () => {
     const { userId } = useParams()
-    const data = useGithubUser(userId)
+    const { data, error, isLoading } = useGithubUser(userId)
 
-
-    if (!data) {
-        return null
+    if (isLoading) {
+        return "Loading..."
     }
+
+    if (error) {
+        return "Error #@!^"
+    }
+
     const { name, location, avatar_url } = data
     return (
         <div className="user">
